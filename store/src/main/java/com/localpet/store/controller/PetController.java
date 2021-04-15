@@ -31,15 +31,22 @@ public class PetController {
 
 @PutMapping("/{name}")
 	public Pet updatePet(@RequestBody Pet pet,@PathVariable(value="name")String Name) {
-		Pet petdb= this.storerepository.findById(Name).
-				orElseThrow(()->new ResourceNotFoundException( "Pet not found with name"+Name));
+		Optional<Pet> petdb= this.storerepository.findById(pet.getName());
+	if(petdb.isPresent())
+	{
+		Pet petupdate= petdb.get();
+		petupdate.setName(pet.getName());
+		petupdate.setPrice(pet.getPrice());
+		petupdate.setType(pet.getType());
+		storerepository.save(petupdate);
 		
-			
-			petdb.setName(pet.getName());
-			petdb.setPrice(pet.getPrice());
-			petdb.setType(pet.getType());
-		return 	this.storerepository.save(petdb);
-			
+	
+	return petupdate;
+	}
+	else {
+		return null;
+	}
+
 		
 		
 	
